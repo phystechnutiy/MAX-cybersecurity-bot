@@ -12,7 +12,6 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import numpy as np
 
-# SQLAlchemy
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
 
@@ -97,18 +96,15 @@ def extract_all_text(msg: Any) -> str:
 
         d = node.model_dump() if hasattr(node, "model_dump") else {}
 
-        # Основное тело сообщения
         body = d.get("body")
         if body:
             text = body.get("text")
             if isinstance(text, str) and text.strip():
                 texts.append(text.strip())
 
-            # Вложения внутри body
             for att in body.get("attachments", []) or []:
                 _iter(att)
 
-        # Ссылка-цепочка (forward через link)
         link = d.get("link")
         if link and link.get("type") == "forward":
             fwd_msg = link.get("message")
@@ -120,24 +116,20 @@ def extract_all_text(msg: Any) -> str:
                     if isinstance(fwd_text, str) and fwd_text.strip():
                         texts.append(fwd_text.strip())
 
-        # Вложения на верхнем уровне
         for att in d.get("attachments", []) or []:
             _iter(att)
 
-        # Разные варианты ключей для пересланных сообщений
         for fwd_key in ("fwd_messages", "forwarded", "forwards", "forward_messages"):
             fwd_list = d.get(fwd_key, [])
             for sub in fwd_list:
                 _iter(sub)
 
-        # Ответ на сообщение (reply)
         reply = d.get("reply_message")
         if reply:
             _iter(reply)
 
     _iter(msg)
 
-    # Убираем дубли
     seen = set()
     uniq: List[str] = []
     for t in texts:
@@ -174,7 +166,7 @@ async def start(event: MessageCreated):
 
 
 ######################################################################
-# COMMAND: /add (вместо кнопки)
+# COMMAND: /add
 ######################################################################
 @dp.message_created(Command("add"))
 async def add_begin(event: MessageCreated):
@@ -237,7 +229,7 @@ async def detect(event: MessageCreated):
             return
 
     ##################################################################
-    # 2. NORMAL DETECTION (с учётом пересланных)
+    # 2. NORMAL DETECTION
     ##################################################################
     full_text = extract_all_text(event.message)
     logging.info("Извлечён текст: %s", full_text)
@@ -262,10 +254,6 @@ async def detect(event: MessageCreated):
             f"Категория сообщений: {category} ({prob:.1%})"
         )
 
-
-######################################################################
-# MAIN LOOP
-######################################################################
 async def main():
     await dp.start_polling(bot)
 
