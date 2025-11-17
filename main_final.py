@@ -12,14 +12,12 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import numpy as np
 
-# SQLAlchemy
+
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
-######################################################################
-# BASIC SETUP
-######################################################################
+
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
@@ -28,9 +26,7 @@ BOT_TOKEN = os.getenv("MAXAPI_BOT_TOKEN")
 bot = Bot(BOT_TOKEN)
 dp = Dispatcher()
 
-######################################################################
-# DATABASE
-######################################################################
+
 DB_PATH = "scam_contacts.db"
 engine = create_engine(f"sqlite:///{DB_PATH}", echo=False)
 Base = declarative_base()
@@ -47,9 +43,6 @@ Base.metadata.create_all(engine)
 SessionLocal = sessionmaker(bind=engine)
 
 
-######################################################################
-# MODEL
-######################################################################
 MODEL_PATH = os.getenv("MODEL_PATH", "./model_anti_fraud")
 MAPPING_PATH = os.getenv("MAPPING_JSON", "./model_anti_fraud/category_mapping_full.json")
 THRESHOLD = float(os.getenv("SCAM_THRESHOLD", "0.4"))
@@ -68,18 +61,14 @@ model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH).to(device
 model.eval()
 
 
-######################################################################
-# STATE MACHINE
-######################################################################
+
 STATE_WAITING_PHONE = "waiting_phone"
 STATE_WAITING_NAME = "waiting_name"
 
 dialog_states: Dict[int, dict] = {}
 
 
-######################################################################
-# HELPERS
-######################################################################
+
 def get_chat_id(event: MessageCreated):
     return event.message.recipient.chat_id
 
@@ -97,18 +86,16 @@ def extract_all_text(msg: Any) -> str:
 
         d = node.model_dump() if hasattr(node, "model_dump") else {}
 
-        # Основное тело сообщения
+        
         body = d.get("body")
         if body:
             text = body.get("text")
             if isinstance(text, str) and text.strip():
                 texts.append(text.strip())
 
-            # Вложения внутри body
             for att in body.get("attachments", []) or []:
                 _iter(att)
 
-        # Ссылка-цепочка (forward через link)
         link = d.get("link")
         if link and link.get("type") == "forward":
             fwd_msg = link.get("message")
@@ -120,24 +107,19 @@ def extract_all_text(msg: Any) -> str:
                     if isinstance(fwd_text, str) and fwd_text.strip():
                         texts.append(fwd_text.strip())
 
-        # Вложения на верхнем уровне
         for att in d.get("attachments", []) or []:
             _iter(att)
 
-        # Разные варианты ключей для пересланных сообщений
         for fwd_key in ("fwd_messages", "forwarded", "forwards", "forward_messages"):
             fwd_list = d.get(fwd_key, [])
             for sub in fwd_list:
                 _iter(sub)
 
-        # Ответ на сообщение (reply)
         reply = d.get("reply_message")
         if reply:
             _iter(reply)
 
     _iter(msg)
-
-    # Убираем дубли
     seen = set()
     uniq: List[str] = []
     for t in texts:
@@ -160,10 +142,6 @@ def predict(text: str):
     prob = float(probs[best])
     return cat, prob, (cat in scam_categories and prob >= THRESHOLD)
 
-
-######################################################################
-# COMMAND: /start
-######################################################################
 @dp.message_created(Command("start"))
 async def start(event: MessageCreated):
     await event.message.answer(
@@ -173,9 +151,6 @@ async def start(event: MessageCreated):
     )
 
 
-######################################################################
-# COMMAND: /add (вместо кнопки)
-######################################################################
 @dp.message_created(Command("add"))
 async def add_begin(event: MessageCreated):
     chat_id = get_chat_id(event)
@@ -186,9 +161,6 @@ async def add_begin(event: MessageCreated):
     )
 
 
-######################################################################
-# COMMAND: /cancel
-######################################################################
 @dp.message_created(Command("cancel"))
 async def cancel(event: MessageCreated):
     chat_id = get_chat_id(event)
@@ -198,18 +170,12 @@ async def cancel(event: MessageCreated):
 
     await event.message.answer("⭕️Добавление в базу отменено.\n\n🔎Возвращаюсь к анализу.")
 
-
-######################################################################
-# MAIN DETECTION
-######################################################################
+/
 @dp.message_created()
 async def detect(event: MessageCreated):
     chat_id = get_chat_id(event)
     text = event.message.body.text or ""
-
-    ##################################################################
-    # 1. WE ARE IN ADD MODE
-    ##################################################################
+    
     if chat_id in dialog_states:
         state = dialog_states[chat_id]["state"]
 
@@ -236,9 +202,6 @@ async def detect(event: MessageCreated):
             )
             return
 
-    ##################################################################
-    # 2. NORMAL DETECTION (с учётом пересланных)
-    ##################################################################
     full_text = extract_all_text(event.message)
     logging.info("Извлечён текст: %s", full_text)
 
@@ -262,10 +225,6 @@ async def detect(event: MessageCreated):
             f"Категория сообщений: {category} ({prob:.1%})"
         )
 
-
-######################################################################
-# MAIN LOOP
-######################################################################
 async def main():
     await dp.start_polling(bot)
 
