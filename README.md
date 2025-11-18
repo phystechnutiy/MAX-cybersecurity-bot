@@ -23,7 +23,7 @@ Docker (для контейнерного запуска)
 
 Пример содержимого .env:
 
-MAXAPI_BOT_TOKEN=f9LHodD0cOKYeAPV2k8tDuqeiHNceGHo6NfVTczY1TwUWjuDO9Ltq7ENE53MPhMfqUbq8diNCOu2nhJByW_V
+MAXAPI_BOT_TOKEN=your_token_here
 MODEL_PATH=./model_anti_fraud
 MAPPING_JSON=./model_anti_fraud/category_mapping_full.json
 SCAM_THRESHOLD=0.4
