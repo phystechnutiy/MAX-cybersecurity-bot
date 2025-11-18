@@ -1,31 +1,36 @@
-# MaxMinds Anti-fraud Bot
+# MaxMinds Anti-Fraud Chat Bot
 
-Анти-мошеннический бот для платформы MAX.  
-Бот принимает обычные и пересланные сообщения, прогоняет их через модель классификации и:
+Проект представляет собой чат-бота для мессенджера MAX для анализа входящих сообщений и определения вероятности мошенничества.  
 
-- оценивает вероятность, что сообщение мошенническое;
-- показывает категорию сообщения;
-- при желании позволяет добавить контакт мошенника в локальную базу (`SQLite`), чтобы использовать её отдельно.
-
-## Стек
-
-- Python 3.11
-- [maxapi](https://github.com/love-apples/maxapi)
-- transformers, torch
-- SQLAlchemy + SQLite
-- python-dotenv
+---
 
 ## Структура проекта
 
+Структура репозитория:
+
 .
-├── main_final.py                 # основной скрипт бота
-├── model_anti_fraud/          # директория с моделью
-│   ├── config.json
-│   ├── pytorch_model.bin
-│   └── ... (остальные файлы модели)
-├── model_anti_fraud/category_mapping_full.json
-├── scam_contacts.db           # локальная база мошенников (создаётся автоматически)
-├── requirements.txt
 ├── Dockerfile
-├── .dockerignore
+├── main_final.py          # точка входа в приложение (запуск бота)
+├── requirements.txt       # Python-зависимости
+├── .env.example           # шаблон .env без секретов
 └── README.md
+
+Требования
+Python 3.9+ (рекомендуется)
+Docker (для контейнерного запуска)
+Локальный .env файл
+
+Пример содержимого .env:
+
+MAXAPI_BOT_TOKEN=/token_here/
+MODEL_PATH=./model_anti_fraud
+MAPPING_JSON=./model_anti_fraud/category_mapping_full.json
+SCAM_THRESHOLD=0.4
+
+Запуск программы через Docker
+
+Формирование образа
+docker build -t antifraud-bot .
+
+Запуск контейнера
+docker run --env-file .env antifraud-bot
