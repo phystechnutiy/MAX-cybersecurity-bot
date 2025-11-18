@@ -45,7 +45,7 @@ docker build -t antifraud-bot .
 docker run --env-file .env antifraud-bot
 ```
 
-3. Обращение к боту
+3. Обращение к боту (для начала работы ботом необходимо написать команду /start)
 
 ```URL
 https://max.ru/t85_hakaton_bot
