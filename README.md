@@ -7,14 +7,15 @@
 ## Структура проекта
 
 Структура репозитория:
-
+```bash
 .
 ├── Dockerfile
 ├── main_final.py          # точка входа в приложение (запуск бота)
 ├── requirements.txt       # Python-зависимости
 ├── .env.example           # шаблон .env без секретов
 └── README.md
-
+```
+```text
 Требования
 Python 3.9+ (рекомендуется)
 Docker (для контейнерного запуска)
@@ -28,9 +29,13 @@ MAPPING_JSON=./model_anti_fraud/category_mapping_full.json
 SCAM_THRESHOLD=0.4
 
 Запуск программы через Docker
-
+```
 Формирование образа
+```bash
 docker build -t antifraud-bot .
+```
 
 Запуск контейнера
+```bash
 docker run --env-file .env antifraud-bot
+```
