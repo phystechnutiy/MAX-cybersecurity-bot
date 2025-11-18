@@ -27,9 +27,15 @@ MAXAPI_BOT_TOKEN=/token_here/
 MODEL_PATH=./model_anti_fraud
 MAPPING_JSON=./model_anti_fraud/category_mapping_full.json
 SCAM_THRESHOLD=0.4
-
-Запуск программы через Docker
 ```
+
+#Запуск программы через Docker
+
+```text
+Убедитесь в наличии локального файла .env
+
+```
+
 Формирование образа
 ```bash
 docker build -t antifraud-bot .
