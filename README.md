@@ -47,5 +47,5 @@ docker run --env-file .env antifraud-bot
 3. Обращение к боту
 
 ```URL
-
+https://max.ru/t85_hakaton_bot
 ```
