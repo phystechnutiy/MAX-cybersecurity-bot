@@ -170,7 +170,6 @@ async def cancel(event: MessageCreated):
 
     await event.message.answer("⭕️Добавление в базу отменено.\n\n🔎Возвращаюсь к анализу.")
 
-/
 @dp.message_created()
 async def detect(event: MessageCreated):
     chat_id = get_chat_id(event)
