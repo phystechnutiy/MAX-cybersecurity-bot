@@ -12,7 +12,6 @@
 ├── Dockerfile
 ├── main_final.py          # точка входа в приложение (запуск бота)
 ├── requirements.txt       # Python-зависимости
-├── .env.example           # шаблон .env без секретов
 └── README.md
 ```
 ```text
