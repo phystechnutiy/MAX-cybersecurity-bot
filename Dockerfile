@@ -28,3 +28,4 @@ ENV MODEL_PATH=/app/model_anti_fraud \
 
 CMD ["python", "main_final.py"]
 
+
