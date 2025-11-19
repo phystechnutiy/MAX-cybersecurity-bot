@@ -16,9 +16,9 @@ RUN pip install gdown
 
 RUN mkdir -p /app/model_anti_fraud && \
     gdown --fuzzy "https://drive.google.com/uc?id=1x_khHgWVYpxuAIZiIqWK5NOpOREEmyQT" -O /tmp/model.zip && \
-    unzip /tmp/model.zip -d /app/model_anti_fraud && \
-    rm /tmp/model.zip && \
-    find /app/model_anti_fraud -name "category_mapping_full.json" -exec cp {} /app/model_anti_fraud/category_mapping_full.json \;
+    unzip /tmp/model.zip -d /tmp/model && \
+    find /tmp/model -type f -exec cp {} /app/model_anti_fraud/ \; && \
+    rm -rf /tmp/model /tmp/model.zip
 
 COPY . /app
 
