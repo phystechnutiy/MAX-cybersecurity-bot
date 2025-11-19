@@ -1,6 +1,6 @@
 # MaxMinds Anti-Fraud Chat Bot
 
-Проект представляет собой чат-бота для мессенджера MAX для анализа входящих сообщений и определения вероятности мошенничества.  
+Чат-бот для мессенджера MAX, предназначенный для анализа входящих сообщений и определения вероятности мошенничества с использованием локальной ML-модели.
 
 ---
 
@@ -19,13 +19,13 @@
 Python 3.9+ (рекомендуется)
 Docker (для контейнерного запуска)
 Локальный .env файл
+Доступ к Google Drive-архиву модели (скачивание происходит автоматически при сборке образа)
 
 Пример содержимого .env:
 
 MAXAPI_BOT_TOKEN=your_token_here
-MODEL_PATH=./model_anti_fraud
-MAPPING_JSON=./model_anti_fraud/category_mapping_full.json
 SCAM_THRESHOLD=0.4
+
 
 ```
 
@@ -44,7 +44,7 @@ docker build -t maxminds-antifraud-bot .
 docker run --rm --env-file .env maxminds-antifraud-bot
 ```
 
-3. Обращение к боту (для начала работы необходимо написать команду /start)
+3. Использование (для начала работы необходимо написать команду /start)
 
 ```URL
 https://max.ru/t85_hakaton_bot
