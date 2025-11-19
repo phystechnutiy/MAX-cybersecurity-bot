@@ -36,12 +36,12 @@ SCAM_THRESHOLD=0.4
 
 1. Формирование образа
 ```bash
-docker build -t antifraud-bot .
+docker build -t maxminds-antifraud-bot .
 ```
 
 2. Запуск контейнера
 ```bash
-docker run --env-file .env antifraud-bot
+docker run --rm --env-file .env maxminds-antifraud-bot
 ```
 
 3. Обращение к боту (для начала работы необходимо написать команду /start)
