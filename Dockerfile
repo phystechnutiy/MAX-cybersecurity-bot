@@ -24,7 +24,7 @@ COPY . /app
 
 ENV MODEL_PATH=/app/model_anti_fraud \
     MAPPING_JSON=/app/model_anti_fraud/category_mapping_full.json \
-    SCAM_THRESHOLD=0.5
+    SCAM_THRESHOLD=0.4
 
 CMD ["python", "main_final.py"]
 
